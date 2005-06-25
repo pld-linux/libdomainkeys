@@ -1,7 +1,7 @@
 Summary:	DomainKey Library for email servers & clients
 Name:		libdomainkeys
 Version:	0.66
-Release:	1
+Release:	2
 License:	Yahoo! DomainKeys Public License Agreement v1.1
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/domainkeys/%{name}-%{version}.tar.gz
@@ -54,7 +54,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}}
 
 install dknewkey dktest $RPM_BUILD_ROOT%{_bindir}
-install domainkeys.h $RPM_BUILD_ROOT%{_includedir}
+install dktrace.h domainkeys.h $RPM_BUILD_ROOT%{_includedir}
 libtool install libdomainkeys.la $RPM_BUILD_ROOT%{_libdir}
 
 %clean
