@@ -1,14 +1,12 @@
-# TODO:
-# - port to libtool && produce shared library
-
 Summary:	DomainKey Library for email servers & clients
 Name:		libdomainkeys
-Version:	0.65a
+Version:	0.66
 Release:	1
 License:	Yahoo! DomainKeys Public License Agreement v1.1
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/domainkeys/%{name}-%{version}.tar.gz
-# Source0-md5:	7d246213e832e86a25e1741063266a34
+# Source0-md5:	38ee9fa346a837662f06e7e098bfb7da
+Patch0:		%{name}-libtool.patch
 URL:		http://domainkeys.sourceforge.net/
 BuildRequires:	openssl-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -43,6 +41,7 @@ Statyczna biblioteka libdomainkeys.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %{__make} \
@@ -52,10 +51,11 @@ Statyczna biblioteka libdomainkeys.
 %install
 rm -rf $RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}}
 
+install dknewkey dktest $RPM_BUILD_ROOT%{_bindir}
 install domainkeys.h $RPM_BUILD_ROOT%{_includedir}
-install *.a $RPM_BUILD_ROOT%{_libdir}
+libtool install libdomainkeys.la $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -66,16 +66,16 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc *.html CHANGES
+%attr(755,root,root) %{_bindir}/*
 %{_includedir}/*.h
-%attr(755,root,root) %{_libdir}/*.a
-#%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
+%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
 
-#%files devel
-#%defattr(644,root,root,755)
-#%attr(755,root,root) %{_libdir}/lib*.so
-#%{_libdir}/lib*.la
-#%dir %{_includedir}/*.h
+%files devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/lib*.so
+%{_libdir}/lib*.la
+%dir %{_includedir}/*.h
 
-#%files static
-#%defattr(644,root,root,755)
-#%{_libdir}/lib*.a
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/lib*.a
