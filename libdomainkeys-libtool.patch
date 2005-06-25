@@ -62,7 +62,7 @@ diff -urN libdomainkeys-0.66.org/Makefile libdomainkeys-0.66/Makefile
 -	ar cr libdomainkeys.a domainkeys.o dns_txt.o dktrace.o
 -	ranlib libdomainkeys.a
 +domainkeys.lo dns_txt.lo dktrace.lo: %.lo: %.c
-+	libtool --mode=compile --tag=CXX $(CC) $(INCS) $(CDFLAGS) $(OPTS) -o $@ -c $<
++	libtool --mode=compile --tag=CXX $(CC) $(INCS) $(CFLAGS) $(OPTS) -o $@ -c $<
 +	
 +libdomainkeys.la: domainkeys.lo dns_txt.lo dktrace.lo
 +	libtool --mode=link --tag=CXX $(CC) domainkeys.lo dns_txt.lo dktrace.lo -o $@ -rpath /usr/lib -version-info 0:66 $(LIBS)
