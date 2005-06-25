@@ -1,0 +1,23 @@
+diff -urN libdomainkeys-0.66.org/domainkeys.c libdomainkeys-0.66/domainkeys.c
+--- libdomainkeys-0.66.org/domainkeys.c	2005-06-21 04:55:39.000000000 +0200
++++ libdomainkeys-0.66/domainkeys.c	2005-06-25 17:04:10.498813408 +0200
+@@ -1384,11 +1384,14 @@
+   }
+   if (s && *s && s[1] && s[1] != '@')
+   {
+-    s = strchr(s, '@') + 1;
+-    if (*s == '\0')
+-    {
+-      //make sure we have an actual domain after @
+-      s = NULL;
++    s = strchr(s, '@');
++    if (s) {
++	s += 1;
++	if (*s == '\0')
++	{
++	    //make sure we have an actual domain after @
++	    s = NULL;
++	}
+     }
+   }
+   else
