@@ -5,7 +5,7 @@
  
  BITS=384
 +if [ -z "$1" ]; then
-+	echo >&2 "Usage: $0 filename"
++	echo >&2 "Usage: dknewkey keyfile [bits]"
 +	exit 1
 +fi
 +tmpfile=$(mktemp ${TMPDIR:-/tmp}/dknewkeyXXXXXX) || exit 1
