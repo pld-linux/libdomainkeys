@@ -1,4 +1,5 @@
 Summary:	DomainKey Library for email servers & clients
+Summary(pl):	Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej
 Name:		libdomainkeys
 Version:	0.66
 Release:	5.1
@@ -16,6 +17,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 DomainKey Library for email servers & clients.
+
+%description -l pl
+Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej.
 
 %package devel
 Summary:	Header files for libdomainkeys library
@@ -55,7 +59,6 @@ Statyczna biblioteka libdomainkeys.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}}
 
 libtool install dknewkey dktest $RPM_BUILD_ROOT%{_bindir}
