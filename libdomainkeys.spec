@@ -1,5 +1,5 @@
 Summary:	DomainKey Library for email servers & clients
-Summary(pl.UTF-8):   Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej
+Summary(pl.UTF-8):	Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej
 Name:		libdomainkeys
 Version:	0.68
 Release:	3
@@ -23,7 +23,7 @@ Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej.
 
 %package devel
 Summary:	Header files for libdomainkeys library
-Summary(pl.UTF-8):   Pliki nagłówkowe biblioteki libdomainkeys
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki libdomainkeys
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	openssl-devel
@@ -36,7 +36,7 @@ Pliki nagłówkowe biblioteki libdomainkeys.
 
 %package static
 Summary:	Static libdomainkeys library
-Summary(pl.UTF-8):   Statyczna biblioteka libdomainkeys
+Summary(pl.UTF-8):	Statyczna biblioteka libdomainkeys
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
