@@ -2,7 +2,7 @@ Summary:	DomainKey Library for email servers & clients
 Summary(pl.UTF-8):	Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej
 Name:		libdomainkeys
 Version:	0.68
-Release:	5
+Release:	6
 License:	Yahoo! DomainKeys Public License Agreement v1.1
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/domainkeys/%{name}-%{version}.tar.gz
@@ -61,9 +61,9 @@ Statyczna biblioteka libdomainkeys.
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}}
 
-libtool install dknewkey dktest $RPM_BUILD_ROOT%{_bindir}
+libtool --mode=install install dknewkey dktest $RPM_BUILD_ROOT%{_bindir}
 install dktrace.h domainkeys.h $RPM_BUILD_ROOT%{_includedir}
-libtool install libdomainkeys.la $RPM_BUILD_ROOT%{_libdir}
+libtool --mode=install install libdomainkeys.la $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
