@@ -11,6 +11,8 @@ Patch0:		%{name}-libtool.patch
 Patch1:		%{name}-segv.patch
 Patch2:		%{name}-dknewkey.patch
 URL:		http://domainkeys.sourceforge.net/
+BuildRequires:	libstdc++-devel
+BuildRequires:	libtool
 BuildRequires:	openssl-devel
 Requires:	mktemp
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
