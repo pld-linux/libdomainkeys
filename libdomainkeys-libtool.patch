@@ -1,59 +1,54 @@
-diff -urbB libdomainkeys-0.68.org/Makefile libdomainkeys-0.68/Makefile
---- libdomainkeys-0.68.org/Makefile	2005-08-30 22:31:39.000000000 +0200
-+++ libdomainkeys-0.68/Makefile	2005-09-29 21:24:08.000000000 +0200
-@@ -2,7 +2,7 @@
- CFLAGS=-DBIND_8_COMPAT -O2
+--- libdomainkeys-0.69/Makefile.orig	2006-01-18 01:28:58.000000000 +0100
++++ libdomainkeys-0.69/Makefile	2017-11-19 10:33:48.827768358 +0100
+@@ -3,58 +3,49 @@
  #CFLAGS += -DDK_DEBUG -DDK_HASH_BUFF -Wall
+ #CFLAGS += -DUNIXWARE
  INCS=-I.
 -LIBS=-L. -ldomainkeys -lcrypto
 +LIBS=-lcrypto -lresolv
  MAKE=make
++libdir=/usr/lib
  
- UNAME := $(shell uname)
-@@ -14,49 +14,44 @@
- 	CFLAGS += -DUNIXWARE
- endif
+-dktest: dktest.o libdomainkeys.a dns.lib socket.lib
+-	$(CC) $(CFLAGS) -o dktest dktest.o $(LIBS) `cat dns.lib` `cat socket.lib`
++dktest: dktest.o libdomainkeys.la
++	libtool --mode=link --tag=CC $(CC) $(LDFLAGS) $(CFLAGS) -o dktest dktest.o libdomainkeys.la
  
-+dktest: dktest.lo libdomainkeys.la
-+	libtool --mode=link --tag=CXX $(CC) $(INCS) $(CFLAGS) -o $@ dktest.lo libdomainkeys.la $(LIBS)
+ dktest.o: dktest.c domainkeys.h
+ 	$(CC) $(CFLAGS) -c dktest.c $(INCS)
  
--dktest: dktest.o libdomainkeys.a dns.lib
--	$(CC) $(CFLAGS) -o dktest dktest.o $(LIBS) `cat dns.lib`
-+dktest.lo: dktest.c domainkeys.h libdomainkeys.la
-+	libtool --mode=compile --tag=CXX $(CC) $(INCS) $(CFLAGS) -o $@ -c $<
- 
--dktest.o: dktest.c domainkeys.h
--	$(CC) $(CFLAGS) -c dktest.c $(INCS)
--
 -testtrace: testtrace.o dktrace.o dktrace.h
 -	$(CC) $(CFLAGS) -o testtrace testtrace.o dktrace.o
--
++testtrace: testtrace.o dktrace.lo dktrace.h
++	libtool --mode=link --tag=CC $(CC) $(LDFLAGS) $(CFLAGS) -o testtrace testtrace.o dktrace.lo
+ 
 -dktrace.o: dktrace.c dktrace.h
-+testtrace: testtrace.lo dktrace.lo dktrace.h libdomainkeys.la
-+	libtool --mode=link --tag=CXX $(CC) $(INCS) $(CFLAGS) -o $@ $< $(LIBS)
++dktrace.lo: dktrace.c dktrace.h
  
  makeheader: makeheader.c
--	$(CC) $(CFLAGS) -o makeheader makeheader.c
-+	libtool --mode=link --tag=CXX $(CC) $(INCS) $(CFLAGS) -o $@ $<
-+
- domainkeys.o: domainkeys.c
+ 	$(CC) $(CFLAGS) -o makeheader makeheader.c
+-domainkeys.o: domainkeys.c
 -	$(CC) $(CFLAGS) -c domainkeys.c $(INCS)
 -dns_txt.o: dns_txt.c
 -	$(CC) $(CFLAGS) -c dns_txt.c
--dnstest.o: dnstest.c
--	$(CC) $(CFLAGS) -c dnstest.c
--dnstest: dnstest.o dns_txt.o libdomainkeys.a dns.lib
--	$(CC) $(CFLAGS) -o dnstest dnstest.o dns_txt.o `cat dns.lib` $(LIBS) 
++domainkeys.lo dns_txt.lo dktrace.lo: %.lo: %.c
++	libtool --mode=compile --tag=CC $(CC) $(CFLAGS) -c $< -o $@ $(INCS)
+ dnstest.o: dnstest.c
+ 	$(CC) $(CFLAGS) -c dnstest.c
+ dnstest: dnstest.o dns_txt.o
+ 	$(CC) $(CFLAGS) -o dnstest dnstest.o dns_txt.o
 -dns.lib: dnstest.c
 -	(if $(MAKE) dnstest >/dev/null 2>&1; then echo -lresolv; else echo ""; fi) >dns.lib
-+	libtool --mode=compile --tag=CXX $(CC) $(INCS) $(CFLAGS) -o $@ -c $<
-+	
-+dnstest.lo: dnstest.c
-+	libtool --mode=compile --tag=CXX $(CC) $(INCS) $(CFLAGS) -o $@ -c $<
-+	
-+dnstest: dnstest.lo dns_txt.lo libdomainkeys.la
-+	libtool --mode=link --tag=CXX $(CC) $(INCS) $(CFLAGS) -o $@ $< $(LIBS)
-+	
+-	 rm -f dnstest
+ 
+ socktest.o: socktest.c
+ 	$(CC) $(CFLAGS) -c socktest.c
+ socktest: socktest.o
+ 	$(CC) $(CFLAGS) -o socktest socktest.o -lsocket
+-socket.lib: socktest.c
+-	(if $(MAKE) socktest >/dev/null 2>&1; then echo -lsocket -lnsl; else echo ""; fi) >socket.lib
+-	rm -f socktest
+ 
  domainkeys.h: domainkeys.c makeheader
  	./makeheader <domainkeys.c >domainkeys.h
  
@@ -61,29 +56,20 @@ diff -urbB libdomainkeys-0.68.org/Makefile libdomainkeys-0.68/Makefile
 -	rm -f libdomainkeys.a
 -	ar cr libdomainkeys.a domainkeys.o dns_txt.o dktrace.o
 -	ranlib libdomainkeys.a
--
--python: domainkeys_wrap.o _domainkeys.so
--
--domainkeys_wrap.o: domainkeys.h domainkeys.i domainkeys_wrap.c
--	#swig -python -module domainkeys domainkeys.i
--	$(CC) $(CFLAGS) -c domainkeys_wrap.c  -I/usr/include/python2.4/
-+domainkeys.lo dns_txt.lo dktrace.lo: %.lo: %.c
-+	libtool --mode=compile --tag=CXX $(CC) $(INCS) $(CFLAGS) $(OPTS) -o $@ -c $<
-+	
 +libdomainkeys.la: domainkeys.lo dns_txt.lo dktrace.lo
-+	libtool --mode=link --tag=CXX $(CC) domainkeys.lo dns_txt.lo dktrace.lo -o $@ -rpath /usr/lib -version-info 0:66 $(LIBS)
-+
-+domainkeys_wrap.o: domainkeys_wrap.c
-+	$(CC) $(CFLAGS) -c domainkeys_wrap.c  -I /usr/include/python2.2/
++	libtool --mode=link --tag=CC $(CC) $(LDFLAGS) $(CFLAGS) domainkeys.lo dns_txt.lo dktrace.lo -o $@ -rpath $(libdir) -version-info 0:69 $(LIBS)
+ 
+ python: domainkeys_wrap.o _domainkeys.so
+ 
+ domainkeys_wrap.o: domainkeys.h domainkeys.i domainkeys_wrap.c
+ 	#swig -python -module domainkeys domainkeys.i
+-	$(CC) $(CFLAGS) -c domainkeys_wrap.c  -I/usr/include/python2.4/
++	$(CC) $(CFLAGS) -fPIC -c domainkeys_wrap.c  $(shell pkg-config --cflags python2)
  
 -_domainkeys.so: domainkeys.o dns_txt.o dktrace.o domainkeys_wrap.o
--	ld -shared domainkeys.o dns_txt.o dktrace.o domainkeys_wrap.o -lcrypto -lresolv -o _domainkeys.so
-+_domainkeys.so: domainkeys.o dns_txt.o
-+	ld -shared domainkeys.o dns_txt.o domainkeys_wrap.o -lcrypto -lresolv -o _domainkeys.so
+-	ld -shared domainkeys.o dns_txt.o dktrace.o domainkeys_wrap.o -lcrypto `cat dns.lib` -o _domainkeys.so
++_domainkeys.so: domainkeys_wrap.o libdomainkeys.la
++	$(CC) $(LDFLAGS) $(CFLAGS) -shared domainkeys_wrap.o -L.libs -ldomainkeys -o _domainkeys.so $(LIBS)
  
  clean:
--	rm -f *.o *.so libdomainkeys.a dns.lib dnstest makeheader dktest testtrace domainkeys.h
-+	rm -f *.o libdomainkeys.a dns.lib dnstest makeheader dktest testtrace domainkeys.h
- 
- # 
- distributionfile:
+ 	rm -f *.o *.so libdomainkeys.a dns.lib dnstest socktest makeheader dktest testtrace domainkeys.h

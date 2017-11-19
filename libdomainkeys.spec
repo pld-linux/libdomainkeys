@@ -1,18 +1,17 @@
 Summary:	DomainKey Library for email servers & clients
 Summary(pl.UTF-8):	Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej
 Name:		libdomainkeys
-Version:	0.68
-Release:	7
+Version:	0.69
+Release:	1
 License:	Yahoo! DomainKeys Public License Agreement v1.1
 Group:		Libraries
-Source0:	http://dl.sourceforge.net/domainkeys/%{name}-%{version}.tar.gz
-# Source0-md5:	c9fe164d6296e7ad5468580875ac4f2e
+Source0:	http://downloads.sourceforge.net/domainkeys/%{name}-%{version}.tar.gz
+# Source0-md5:	15ec065c6f645a0b9fde3f1ff7681127
 Patch0:		%{name}-libtool.patch
 Patch1:		%{name}-segv.patch
 Patch2:		%{name}-dknewkey.patch
 URL:		http://domainkeys.sourceforge.net/
-BuildRequires:	libstdc++-devel
-BuildRequires:	libtool
+BuildRequires:	libtool >= 2:1.5
 BuildRequires:	openssl-devel
 Requires:	mktemp
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -57,15 +56,17 @@ Statyczna biblioteka libdomainkeys.
 %build
 %{__make} \
 	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -DBIND_8_COMPAT"
+	CFLAGS="%{rpmcflags} %{rpmcppflags} -DBIND_8_COMPAT" \
+	LDFLAGS="%{rpmldflags}"
+	libdir=%{_libdir}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}}
 
-libtool --mode=install install dknewkey dktest $RPM_BUILD_ROOT%{_bindir}
-install dktrace.h domainkeys.h $RPM_BUILD_ROOT%{_includedir}
 libtool --mode=install install libdomainkeys.la $RPM_BUILD_ROOT%{_libdir}
+libtool --mode=install install dknewkey dktest $RPM_BUILD_ROOT%{_bindir}
+cp -p dktrace.h domainkeys.h $RPM_BUILD_ROOT%{_includedir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -76,15 +77,18 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc *.html CHANGES
-%attr(755,root,root) %{_bindir}/*
-%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
+%attr(755,root,root) %{_bindir}/dknewkey
+%attr(755,root,root) %{_bindir}/dktest
+%attr(755,root,root) %{_libdir}/libdomainkeys.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libdomainkeys.so.0
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_libdir}/lib*.la
-%{_includedir}/*.h
+%attr(755,root,root) %{_libdir}/libdomainkeys.so
+%{_libdir}/libdomainkeys.la
+%{_includedir}/dktrace.h
+%{_includedir}/domainkeys.h
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/lib*.a
+%{_libdir}/libdomainkeys.a
