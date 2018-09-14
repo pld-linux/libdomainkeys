@@ -2,7 +2,7 @@ Summary:	DomainKey Library for email servers & clients
 Summary(pl.UTF-8):	Biblioteka DomainKey dla serwerów i klientów poczty elektronicznej
 Name:		libdomainkeys
 Version:	0.69
-Release:	2
+Release:	3
 License:	Yahoo! DomainKeys Public License Agreement v1.1
 Group:		Libraries
 Source0:	http://downloads.sourceforge.net/domainkeys/%{name}-%{version}.tar.gz
@@ -10,6 +10,7 @@ Source0:	http://downloads.sourceforge.net/domainkeys/%{name}-%{version}.tar.gz
 Patch0:		%{name}-libtool.patch
 Patch1:		%{name}-segv.patch
 Patch2:		%{name}-dknewkey.patch
+Patch3:		openssl.patch
 URL:		http://domainkeys.sourceforge.net/
 BuildRequires:	libtool >= 2:1.5
 BuildRequires:	openssl-devel
@@ -52,6 +53,7 @@ Statyczna biblioteka libdomainkeys.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__make} \
